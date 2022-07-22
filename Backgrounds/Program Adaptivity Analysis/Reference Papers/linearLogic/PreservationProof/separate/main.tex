@@ -1,0 +1,254 @@
+\documentclass[titlepage]{article}
+\usepackage[utf8]{inputenc}
+\input{prelude}
+
+\title{\textbf{LINEAR LOGIC Homework \#2}\\
+\large{two separate Lemmas for Substitution}
+}
+\author{
+Jiawen \textsc{Liu}\\
+\texttt{UBID: jliu223 \quad \quad person \#: 50245965}
+}
+ \date{}
+
+\begin{document}
+
+\maketitle 
+
+\newpage
+ \begin{figure}
+ $$
+ \begin{array}{rcl}
+     \text{Types} & \quad & T ::= A|B|C \\[2mm]
+
+     \text{Term} & \quad & t ::=  x|t|\abs{x}{t}\\[2mm]
+
+\end{array}
+$$
+\caption{syntax}
+\end{figure}
+
+
+\begin{figure}
+\boxed{  \Gamma \jtype{}{}{t}{A}    }
+\begin{mathpar}
+  \inferrule*[right = AXIOM]
+   {\empty}
+   { x:A \jtype{}{}{x}{A}  }
+   
+   \and
+    \inferrule*[right = ABS]
+   {\Gamma, x: A \jtype{}{}{t}{B}}
+   { \Gamma \jtype{}{}{\abs{x}{t}}{A \rightarrow B}  }
+   
+   \and
+   \inferrule*[right = APP]
+   {\Gamma \cap \Delta = \emptyset \\ \Gamma \jtype{}{}{t}{A \rightarrow B} \\ \Delta \jtype{}{}{u}{A}}
+   {\Gamma,\Delta \jtype{}{}{t\ u}{B}  }
+   
+   \and
+    \inferrule*[ right = EXCHANGE]
+   {\Gamma, x:A, y:B \jtype{}{}{u}{C}}
+   {\Gamma, y:B, x:A \jtype{}{}{u}{C}  } 
+   
+   \and
+   \inferrule*[ right = WEAKING ]
+   {\Gamma \jtype{}{}{t}{B}}
+   {\Gamma, x:!A \jtype{}{}{t}{B}  }
+   
+   \and
+    \inferrule*[ right = DERELICTION ]
+   {\Gamma, x:A \jtype{}{}{t}{B}}
+   {\Gamma, x:!A \jtype{}{}{t}{B}}
+
+   \and
+    \inferrule*[ right = CONTRACT ]
+   {\Gamma, x:!A, y:!A \jtype{}{}{t}{C}}
+   { \Gamma, x:!A \jtype{}{}{t[x/y]}{C}}
+   
+   \and 
+   \inferrule*[ right = PROMOTION ]
+   {!\Gamma \jtype{}{}{t}{A}}
+   { ! \Gamma  \jtype{}{}{t}{!A}  }
+   
+\end{mathpar}
+\caption{Typing rules}
+\end{figure}
+
+
+\begin{lemma}[Preservation under Substitution]$ $
+  \label{lem:1}
+  \begin{enumerate}
+  	\item If $\Gamma \jtype{}{}{t}{A}$ and $\Delta, x:A \jtype{}{}{u}{B}$ then $\Gamma, \Delta \jtype{}{}{u[t/x]}{B}$.
+
+  	\item If $! \Gamma \jtype{}{}{t}{! A} $ and $\Delta, x:!A \jtype{}{}{u}{B}$ then $! \Gamma, \Delta \jtype{}{}{u[t/x]}{B}$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Lemma 1.1 is proved in lecture.\\
+Lemma 1.2 is proved by induction on the typing derivation of the second premise  $\Delta, x: ! A \jtype{}{}{u}{B}$. \\
+   Assume we know: $! \Gamma \jtype{}{}{t}{! A}$ \\
+   
+  \noindent \textbf{Case}\\
+  \noindent \textbf{SubCase1:}
+  \[
+   \inferrule*[ right = WEAKING]
+   {\Delta \jtype{}{}{u}{B}}
+   {\Delta, x:!A \jtype{}{}{u}{B}}
+  \]
+  TS: $! \Gamma, \Delta \jtype{}{}{u[t/x]}{B}$ \\
+  STS: $! \Gamma, \Delta \jtype{}{}{u}{B}$, because $x$ doesn't show up in $u$. \\
+  By applying WEAKING rule on hypothesis, we get: $\Delta, ! \Gamma \jtype{}{}{u}{B}$ .\\
+  By applying WEAKING rule, we get: $! \Gamma, \Delta \jtype{}{}{u}{B}$ .\\
+  This case is proved.
+
+  \noindent \textbf{SubCase2:}
+  \[
+   \inferrule*[ right = WEAKING]
+   {\Delta, x:!A \jtype{}{}{u}{B}}
+   {\Delta, x:!A, \hat{x} : ! A \jtype{}{}{u}{B}}
+  \]
+  TS: $! \Gamma, \Delta, \hat{x} : !A \jtype{}{}{u[t/x]}{B}$ \\
+  By IH, we get:
+  $! \Gamma, \Delta \jtype{}{}{u[t/x]}{B}$\\
+  By apply WEAKING rule, we get:
+  $! \Gamma, \Delta, \hat{x} : ! A  \jtype{}{}{u[t/x]}{B}$\\
+  This case is proved.\\
+
+  \noindent \textbf{Case}
+
+  \noindent \textbf{SubCase1:}
+  \[
+   \inferrule*[ right = DERELICTION ]
+   {\Delta, x:A \jtype{}{}{u}{B}}
+   {\Delta, x:!A \jtype{}{}{u}{B}}
+  \]
+  TS: $! \Gamma, \Delta \jtype{}{}{u[t/x]}{B}$. \\
+  By IH of Lemma 1.1, we get:
+  $ \Gamma, \Delta \jtype{}{}{u[t/x]}{B}$.\\
+  By applying the DERELICTION rule, we get: 
+  $ !\Gamma, \Delta \jtype{}{}{u[t/x]}{B}$. \\
+  This case is proved.
+
+  \noindent \textbf{SubCase2:}
+  \[
+   \inferrule*[ right = DERELICTION ]
+   {\Delta, x:!A , \hat{x} : A\jtype{}{}{u}{B}}
+   {\Delta, x:!A, \hat{x} : ! A \jtype{}{}{u}{B}}
+  \]
+  TS: $! \Gamma, \Delta, \hat{x} : ! A \jtype{}{}{u[t/x]}{B}$. \\
+  By IH, we get: $! \Gamma, \Delta, \hat{x} : A \jtype{}{}{u[t/x]}{B}$. \\
+  By applying DERELICTION rule, we get: $! \Gamma, \Delta, \hat{x} : ! A \jtype{}{}{u[t/x]}{B}$. \\
+  This case is proved.\\
+
+  \noindent \textbf{Case}
+
+  \noindent \textbf{SubCase1:}
+  \[
+   \inferrule*[ right = CONTRACT ]
+   {\Delta, x:!A, y:!A \jtype{}{}{v}{B}}
+   { \Delta, x:!A \jtype{}{}{v[x/y]}{B}}
+  \]  
+  TS: $! \Gamma, \Delta \jtype{}{}{u[t/x]}{B}$ \\
+  STS: $! \Gamma, \Delta \jtype{}{}{v[x/y][t/x]}{B}$ \\
+  STS: $! \Gamma, \Delta \jtype{}{}{v[t/y][t/x]}{B}$ \\
+  By IH on $\Delta, x:!A, y:!A \jtype{}{}{v}{B}$, we get:\\
+  $! \Gamma, \Delta, y:!A \jtype{}{}{v[t/x]}{B} $\\
+  \todo{
+  Rename all the variables in premise 1: $! \Gamma \jtype{}{}{t}{! A}$, we get:\\
+  $! \Gamma' \jtype{}{}{t[\Gamma'/ \Gamma]}{!A}$\\
+  Apply Induction Hypothesis again on $! \Gamma, \Delta, y:!A \jtype{}{}{v[t/x]}{B} $ with premise $! \Gamma' \jtype{}{}{t[! \Gamma'/! \Gamma]}{! A}$, we get:\\
+  $!\Gamma', ! \Gamma, \Delta\jtype{}{}{v[t/x][t[\Gamma' / \Gamma]/y]}{B}$\\
+  Apply CONTRACT rule on every pair of same variables in $\Gamma', \Gamma$ with different name, we get:\\
+  $! \Gamma, \Delta\jtype{}{}{v[t/x][t[\Gamma' / \Gamma]/y][\Gamma / \Gamma']}{B}$.\\
+  Because $v[t/x][t[\Gamma' / \Gamma]/y][\Gamma / \Gamma'] =v[t/x][t/y] = v[t/y][t/x]$.
+  }\\
+  this case is proved.
+
+
+
+  \noindent \textbf{SubCase2:}
+  \[
+   \inferrule*[ right = CONTRACT ]
+   {\Delta, x:!A, \hat{x}:!A, y:!A \jtype{}{}{v}{B}}
+   { \Delta, x:!A, \hat{x}:!A  \jtype{}{}{v[\hat{x}/y]}{B}}
+  \]  
+  where $v[\hat{x}/y] = u$.\\
+  TS: $! \Gamma, \Delta, \hat{x}:!A \jtype{}{}{u[t/x]}{B}$ \\
+  STS: $! \Gamma, \Delta, \hat{x}:!A \jtype{}{}{v[\hat{x}/y][t/x]}{B}$ \\
+  We know $\Delta, \hat{x}:!A, y:!A, x:!A \jtype{}{}{v}{B}$ by applying EXCHANGE rule on $\Delta, x:!A, \hat{x}:!A, y:!A \jtype{}{}{v}{B}$.\\
+  By IH on $\Delta, \hat{x}:!A, y:!A, x:!A \jtype{}{}{v}{B}$, we get:\\
+  $!\Gamma, \Delta, \hat{x}:!A, y:!A \jtype{}{}{v[t/x]}{B} $\\
+  By applying CONTRACT rule on $!\Gamma, \Delta, \hat{x}:!A, y:!A \jtype{}{}{v[t/x]}{B} $, we get:\\
+  $! \Gamma, \Delta, \hat{x}:!A \jtype{}{}{v[t/x][\hat{x}/y]}{B}$.\\
+  Because $v[t/x][\hat{x}/y] \equiv v[\hat{x}/y][t/x]$, this case is proved.\\
+
+
+  \noindent \textbf{Case}
+  \[
+   \inferrule*[ right = PROMOTION ]
+   {!\Delta, x:!A \jtype{}{}{u}{C}}
+   { ! \Delta, x:!A  \jtype{}{}{u}{!C}  }
+  \]
+  where $B = !C$.\\
+  TS: $! \Gamma, ! \Delta \jtype{}{}{u[t/x]}{B}$.\\
+  STS: $! \Gamma, ! \Delta \jtype{}{}{u[t/x]}{!C}$\\
+  By IH, we get: $! \Gamma, ! \Delta \jtype{}{}{u[t/x]}{C}$\\
+  By applying the PROMOTION rule, we get: $! \Gamma, ! \Delta \jtype{}{}{u[t/x]}{!C}$.\\
+  This case is proved.
+\end{proof}
+
+
+\begin{theorem}[Preservation]
+\label{thm:pre}
+  If $\Gamma \jtype{}{}{t}{A}$ and $t \rightarrow t' $ then $ \jtype{}{}{t'}{A} $
+\end{theorem}
+\begin{proof} of Theorem \ref{thm:pre} by induction on the derivation  of first premise: $\Gamma \jtype{}{}{t}{A}$:
+
+
+\end{proof}
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
