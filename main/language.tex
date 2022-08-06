@@ -1,6 +1,6 @@
 %
 %
-\subsection{Labeled Language}
+\subsection{Syntax}
 % \mg{It is ok to list all the operations in the appendix but for the main paper it is better to save space.}
 \[
 \begin{array}{llll}
@@ -44,14 +44,18 @@ n ~|~ {x} ~|~ \aexpr \oplus_a \aexpr
 }
 \\
 %
-\mbox{Query Expression} 
+\mbox{ Expression for \highlight{NL Quantitative Property}} 
 & {\qexpr} & ::= 
-& { \qval ~|~ \aexpr ~|~ \qexpr \oplus_a \qexpr ~|~ \chi[\aexpr]} 
+& 
+{ \qval ~|~ 
+% \aexpr ~|~ \qexpr \oplus_a \qexpr ~|~ \chi[\aexpr]
+} 
 \\
 %
-\mbox{Query Value} & \qval & ::= 
-& {n ~|~ \chi[n] ~|~ \qval \oplus_a  \qval ~|~ n \oplus_a  \chi[n]
-    ~|~ \chi[n] \oplus_a  n}
+\mbox{Value for \highlight{NL Quantitative Property}} & \qval & ::= 
+& 
+% {n ~|~ \chi[n] ~|~ \qval \oplus_a  \qval ~|~ n \oplus_a  \chi[n]
+    % ~|~ \chi[n] \oplus_a  n}
 \\
 % \\%
 \mbox{Label} 
@@ -61,51 +65,29 @@ n ~|~ {x} ~|~ \aexpr \oplus_a \aexpr
 \mbox{Labeled Command} 
 & {c} & ::= &  
 \clabel{\assign{x}{\expr}}^l 
-% ~|~ \clabel{\assign{x}{\query(\qexpr)}}^l
+~|~ \highlight{\clabel{\assign{x}{\nonlinear(\qexpr)}}^l}
 ~|~  \clabel{\eskip}^l
 ~|~ \ewhile \clabel{\bexpr}^{l} \edo {c}
 ~|~ \eif(\clabel{\bexpr}^{l} , {c}, {c}) 
 \\ 
 &&&
-\highlight
-{
 ~|~ \clabel{\efun}^l: x(r, x_1, \ldots, x_n) := c
 ~|~ \clabel{\assign{x}{\ecall(x, e_1, \ldots, e_n)}}^l
-}
 ~|~ {c};{c}  
 \\ 
 % \\
 \mbox{Event} 
 & \event & ::= & 
 % ~|~ ({x}, l, v, \qval)
-({x}, l, v, \bullet)   ~~~~~~~~~~~ \mbox{Assignment Event} \\
-&&& ~|~(\bexpr, l, v, \bullet)   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \mbox{Testing Event}
+({x}, l, v, \bullet)   \qquad \mbox{Assignment Event} \\
+&&& ~|~(\bexpr, l, v, \bullet)  \qquad \mbox{Testing Event}
 \\
-% &&& \text{\mg{I think it would be better to use quadruples for events, where the}}\\
-% &&& \text{\mg{first element is either a variable or a boolean expression and }}\\
-% &&& \text{\mg{the last is either a query value or some default value $\bullet$}}\\
-%
-% \mbox{Trace} & \trace
-% & ::= & \cdot | \trace \cdot \event | \trace \tracecat \trace 
-% \\
-%
-% \mbox{Trace} & \trace
-% & ::= & [] ~|~ \event:: \trace ~|~ \trace \tracecat \trace  \\
+&&& ~|~ \highlight{({x}, l, v, \qval)  \qquad \mbox{NL Property Assignment Event}}
+\\
 \mbox{Trace} & \trace
 & ::= & [] ~|~ \trace :: \event\\
-% &&& \text{\mg{I don't understand why you need both :: and ++ as constructors.}}\\
-% &&& \text{\jl{Because append is to the left but we are adding element to the left in the OS}}\\
-% &&& \text{\jl{I was too sticky to the convention, it is a good idea to append to the left and just use $::$}}
-% %
-% \mbox{Event Signature} & \sig
-% & ::= & (x, l, n) | (x, l, n, \query) | (b, l, n)
-% \\
-% %
 \end{array}
 \]
-% \todo{change trace notation into list, and update corresponding operator nations}
-% \\
-% \wqside{"$\cdot$" has two meanings? empty, delimit. Trace is list of event?}
 We use following notations to represent the set of corresponding terms:
 \[
 \begin{array}{lll}
@@ -113,9 +95,9 @@ We use following notations to represent the set of corresponding terms:
 \\ 
 %
 \mathcal{VAL} & : & \mbox{Set of Values} 
-% \\ 
-% %
-% \mathcal{QVAL} & : & \mbox{Set of Query Values} 
+\\ 
+%
+\mathcal{QVAL} & : & \mbox{Set of Values for Non-Linear Property} 
 \\ 
 %
 \cdom & : & \mbox{Set of Commands} 
@@ -149,23 +131,16 @@ We use following notations to represent the set of corresponding terms:
 %
 %
 %
+%
+%
+% \subsection{Trace-based Operational Semantics for Language \mg{What is ``Language''?}}
+\subsection{Trace-based Operational Semantics}
+\subsubsection{Event}
+\input{event}
+\subsubsection{Trace}
+\input{trace}
+\subsubsection{Environment}
 Environment $ \env : {\mathcal{T}}  \to \mathcal{VAR} \to \mathcal{VAL} \cup \{\bot\}$
-% \mgside{The following definition is missing one case, also it is better to say that $y\neq x$.}
-% \[
-% \begin{array}{lll}
-% \env(\trace  \tracecat [(x, l, v, \cdot)]) x \triangleq v
-% &
-% \env(\trace \tracecat [(y, l, v, \cdot)]) x \triangleq \env(\trace) x, y \neq x
-% &
-% \env(\trace \tracecat [(b, l, v, \cdot)]) x \triangleq \env(\trace) x
-% \\
-% \env(\trace \tracecat [(x, l, v, \qval)]) x \triangleq v
-% &
-% \env(\trace \tracecat [(y, l, v, \qval)]) x \triangleq \env(\trace) x, y \neq x
-% &
-% \env({[]} ) x \triangleq \bot
-% \end{array}
-% \]
 \[
 \begin{array}{lll}
 \env(\trace  \traceadd (x, l, v, \bullet)) x \triangleq v
@@ -181,10 +156,9 @@ Environment $ \env : {\mathcal{T}}  \to \mathcal{VAR} \to \mathcal{VAL} \cup \{\
 \env({[]} ) x \triangleq \bot
 \end{array}
 \]
-%
-%
-% \subsection{Trace-based Operational Semantics for Language \mg{What is ``Language''?}}
-\subsection{{Trace-based Operational Semantics for {\tt Query While} Language}}
+
+\subsubsection{Operational Semantics Rules}
+
 {
 \begin{mathpar}
 \boxed{ \config{\trace,\aexpr} \aarrow v \, : \, \mbox{Trace  $\times$ Arithmetic Expr $\Rightarrow$ Arithmetic Value} }
@@ -396,6 +370,7 @@ The trace based operational semantics rules are defined in Figure \ref{fig:os}.
 %
 \and
 %
+\highlight
 {
 \inferrule
 {
@@ -410,7 +385,7 @@ The trace based operational semantics rules are defined in Figure \ref{fig:os}.
 \xrightarrow{} 
 \config{{\clabel{\eskip}^l,  \trace \traceadd \event} }
 }
-~\textbf{query}
+~\textbf{NL}
 }
 %
 \and
@@ -513,7 +488,8 @@ c; \ewhile [b]^{l} \edo c,
 % %
 \and
 %
-\highlight{
+% \highlight
+{
 \inferrule
 {
  c' = (c)^{+n}
@@ -530,7 +506,8 @@ c; \ewhile [b]^{l} \edo c,
 %
 }
 \\
-\highlight{
+% \highlight
+{
 %
 \inferrule
 {
@@ -566,8 +543,7 @@ c; \ewhile [b]^{l} \edo c,
     \label{fig:os}
 \end{figure}
 %
-\\
-\highlight{
+%
   \begin{defn}[Label Increase]
     \label{def:label_inc}  
     Label Increase $ + : {\ldom \to \mathbb{N} \to \ldom}$, increase a label $l$ by a natural number $n$:
@@ -616,7 +592,6 @@ in order to record the calling site.
 \end{array}
 \]
 \end{defn}
-}
 % Each command is now labeled with a label $l$, either a natural number standing for the line of code where the command appears, or a symbol of $in$ or $ex$ used for annotating the input variables, and the exist point of the program. Notice that we associate the label $l$ to the conditional predicate $\bexpr$ in the if statement, and to the while guard counter $\bexpr$ in the $\ewhile$ statement.
 % We abuse the same notation $c$ for labeled command in the rest of the paper.
 % \\
@@ -647,7 +622,7 @@ $\avar : \cdom \to \mathcal{P}(\mathcal{VAR} \times \mathbb{N})$)]
 % % $\lvar_{c} \subseteq \mathcal{VAR} \times \mathbb{N}$ or 
 % $\lvar : \cdom \to \mathcal{P}(\mathcal{VAR} \times \mathcal{L})$
 \label{def:avar}
-{\footnotesize
+{
 $$ \avar_{c} \triangleq
   \left\{
   \begin{array}{ll}
@@ -677,7 +652,7 @@ $$
 % $\lvar_{c} \subseteq \mathcal{VAR} \times \mathbb{N}$ or 
 $\lvar : \cdom \to \mathcal{P}(\mathcal{LV})$]
 \label{def:lvar}
-{\footnotesize
+{
 $$
   \lvar_{c} \triangleq
   \left\{
@@ -704,54 +679,6 @@ $$
 %
 %
 %
-% is a subset of the program's assigned variables, where every variable in this set is assigned by a query in the program.
-% \mg{The set of query variables of a program is the set of variables set to the result of a query in the program.}\\
-We also defined the set of query variables for a program $c$,
-it is the set of variables set to the result of a query in the program formally in Definition~\ref{def:qvar}.
-% \mg{In the next definition, why do you call it a vector? It seems that you define it as a set.}\\
-% \jl{fixed}\\
-%
-% \begin{defn}[Query Variables ($\qvar_{c} \subseteq \mathcal{VAR} \times \mathbb{N}$)].
-  % \\
-% % \begin{defn}[Query Variables ($\qvar: \cdom \to \mathcal{P}(\mathcal{LV})$)] 
-% %   \label{def:qvar}
-% % Given a program $c$, its query variables 
-% % % \mg{it seems you are missing the $_c$ subscript. Also, this is a minor point but I don't think it is a good idea to use a subscript, cannot you just use $\qvar(c)$.}
-% % $\qvar(c)$ is the set of variables set to the result of a query in the program.
-% % % \jl{fixed}
-% % It is defined as follows:
-% % {\footnotesize
-% % $$
-% %   % \qvar_{{c}} \triangleq
-% %   \qvar(c) \triangleq
-% %   \left\{
-% %   \begin{array}{ll}
-% %       \{\}                  
-% %       & {c} = [{\assign x \expr}]^{l} 
-% %       \\
-% %       \{{x}^l\}                  
-% %       & {c} = [{\assign x \query(\qexpr)}]^{l} 
-% %       \\
-% %       \qvar(c_1) \cup \qvar(c_2)  
-% %       & {c} = {c_1};{c_2}
-% %       \\
-% %       \qvar(c_1) \cup \qvar(c_2) 
-% %       & {c} =\eif([\bexpr]^{l}, c_1, c_2) 
-% %       \\
-% %       \qvar(c')
-% %       & {c}   = \ewhile ([\bexpr]^{l}, {c}')
-% % \end{array}
-% % \right.
-% % $$
-% % }
-% % \end{defn}
-% %
-% It is easy to see that a program $c$'s query variables is a subset of 
-% its labeled variables, $\qvar(c) \subseteq \lvar(c)$.
-%
-% \mg{In this definition as well as in others, I have the impression that you assume that the labelled variables are unique in the program. For example, it would not make sense to assign a query to the same labelled variable over and over. If this is the case, we need to make this very explicit in the paper.}
-% \jl{TODO}
-%
 Every labeled variable in a program is unique, formally as follows with proof in Appendix~\ref{apdx:lemma_sec123}.
 \begin{lem}[Uniqueness of the Labeled Variables]
   \label{lem:lvar_unique}
@@ -762,10 +689,41 @@ Every labeled variable in a program is unique, formally as follows with proof in
     \]
 \end{lem}
 %
+\begin{defn}[Non-Linear Property Variables ($\qvar: \cdom \to \mathcal{P}(\mathcal{LV})$)] 
+  \label{def:qvar}
+Given a program $c$, its query variables 
+% \mg{it seems you are missing the $_c$ subscript. Also, this is a minor point but I don't think it is a good idea to use a subscript, cannot you just use $\qvar(c)$.}
+$\qvar(c)$ is the set of variables set to the result of a query in the program.
+% \jl{fixed}
+It is defined as follows:
+{
+$$
+  % \qvar_{{c}} \triangleq
+  \qvar(c) \triangleq
+  \left\{
+  \begin{array}{ll}
+      \{\}                  
+      & {c} = [{\assign x \expr}]^{l} 
+      \\
+      \{{x}^l\}                  
+      & {c} = [{\assign x \query(\qexpr)}]^{l} 
+      \\
+      \qvar(c_1) \cup \qvar(c_2)  
+      & {c} = {c_1};{c_2}
+      \\
+      \qvar(c_1) \cup \qvar(c_2) 
+      & {c} =\eif([\bexpr]^{l}, c_1, c_2) 
+      \\
+      \qvar(c')
+      & {c}   = \ewhile ([\bexpr]^{l}, {c}')
+\end{array}
+\right.
+$$
+}
+\end{defn}
 %
-\subsection{Event and Trace}
-\label{subsec:event_trace}
-\input{event}
-\input{trace}
+% \subsection{Event and Trace}
+% \label{subsec:event_trace}
+
 %
 \clearpage

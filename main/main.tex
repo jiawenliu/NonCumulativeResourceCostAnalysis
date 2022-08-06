@@ -8,7 +8,7 @@
 \newcommand{\highlight}[1]{\textcolor[rgb]{.0,0.0,1.0}{ #1}}
 
 \usetikzlibrary{shapes,arrows}
-\newcommand{\THESYSTEM}{\textsf{AdaptFun}}
+\newcommand{\THESYSTEM}{\textsf{DecCostAlg}}
 
 % Define block styles
 \tikzstyle{decision} = [diamond, draw, fill=blue!20, 
@@ -20,7 +20,7 @@
     minimum height=2em]
 
 \begin{document}
-\title{Program Analysis for Adaptivity Analysis}
+\title{Program Non-Linear Quantitative Property Analysis}
 
 \author{}
 
@@ -35,41 +35,51 @@
 % %
 \section{Introduction}
 % \input{overview}
+\section{Non-Linear Property}
 
 \section{{While Language}}
 \label{sec:language}
 \input{language}
 \clearpage
 % %
+\section{Execution-Based Non-Linear Property Formalization}
+\label{sec:exe}
 % %
-\section{\highlight{Dependency and Data Cost}}
-\label{sec:datacost}
-% \input{dep}
-\input{datacost}
-% \input{dep_example}
 \clearpage
 % % 
-\section{\THESYSTEM}
-\label{sec:thesystem}
-\input{longestwalk_alg}
-% % % % 
-
+\section{Static Non-Linear Property Analysis}
+\label{sec:static}
+\section{Heap Cost as the Non-Linear Property}
+\label{sec:app-heap}
+\subsection{Language Instantiation}
+\subsection{Execution-Based Heap Cost Analysis}
+\subsection{Static Heap Cost Analysis}
+\subsection{Examples and Experimental Results}
+\input{examples/heap/nested_while}
+\input{examples/heap/whileSim}
+\section{Adaptivity as the Non-Linear Property}
+\label{sec:app-adapt}
+\subsection{Language Instantiation}
+\subsection{Execution-Based Heap Cost Analysis}
+\subsection{Static Heap Cost Analysis}
+\subsection{Examples and Experimental Results}
+\input{examples/adapt/twoRounds}
 
 \clearpage
 %
-\section{Examples and Experimental Results}
-\input{examples}
-% \input{experimental_results}
-
-\section{Generalization to Interprocedure Call}
-
-\section{Reduction of CFL-Reachability Problem into Longest Finite Walk}
+\section{Joint Distribution as the Non-Linear Property}
+\label{sec:app-distr}
+\subsection{Language Instantiation}
+\subsection{Execution-Based Heap Cost Analysis}
+\subsection{Static Heap Cost Analysis}
+\subsection{Examples and Experimental Results}
+\input{examples/probabilistic/whileSim}
 %
 \clearpage
 \appendix
 \addcontentsline{toc}{section}{Appendices}
 \section*{Appendices}
-\input{appendix}
+% \input{appendix}
 
 \bibliographystyle{plain}
 \bibliography{main.bib}
